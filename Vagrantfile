@@ -7,7 +7,7 @@ Vagrant.configure("2") do |config|
   # config.vm.network "forwarded_port", guest: 80, host: 8080
 
   # config.vm.network "private_network", ip: "192.168.33.10"
-  config.vm.network "private_network", ip: "192.168.33.10", auto_config:false
+  config.vm.network "private_network", ip: "192.168.33.10"
 
   # config.vm.synced_folder "../data", "/vagrant_data"
 

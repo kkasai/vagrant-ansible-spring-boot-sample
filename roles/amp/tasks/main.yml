@@ -44,6 +44,7 @@
 - name: create database
   mysql_db:
     name: "{{ mysql.database}}"
+    encoding: utf8
 
 - name: create mysql user of application
   mysql_user:
