@@ -1,0 +1,15 @@
+---
+- name: Install java
+  yum: 
+   name: java-1.8.0-openjdk
+
+- name: create systemd file
+  copy:
+    src: myapp.service
+    dest: /etc/systemd/system/myapp.service
+    mode: 0644
+
+- name: create directory
+  file:
+    dest: /var/myapp
+    state: directory

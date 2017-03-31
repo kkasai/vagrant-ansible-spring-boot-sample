@@ -1,0 +1,75 @@
+---
+- name: Install apache
+  yum: 
+   name: httpd
+
+- name: register epel
+  yum:
+    name: epel-release
+
+- name: register remi
+  yum:
+    name: http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
+
+- name: Install php7.1
+  yum: 
+    enablerepo: remi,remi-php71,epel
+    name: "{{ item }}"
+  with_items: 
+    - php
+    - php-devel
+    - php-pear
+    - php-mbstring
+    - php-mysql
+
+- name: Install mysql-community
+  yum:
+    name: http://dev.mysql.com/get/mysql-community-release-el7-5.noarch.rpm
+    state: present
+
+- name: Install mysql
+  yum:
+    enablerepo: mysql56-community  
+    name: "{{ item }}"
+  with_items:
+    - mysql-server
+    - MySQL-python
+
+- name: Start mysql
+  systemd:
+    name: mysqld
+    enabled: yes
+    state: started
+
+- name: create database
+  mysql_db:
+    name: "{{ mysql.database}}"
+
+- name: create mysql user of application
+  mysql_user:
+    name: "{{ mysql.application.user}}"
+    password: "{{ mysql.application.password }}"
+    host: '%'
+    priv: '*.*:ALL'
+
+- name: Setting MySQL user
+  mysql_user:
+    name: "{{ mysql.root.user}}"
+    password: "{{ mysql.root.password }}"
+
+- name: Install phpMyAdmin
+  yum:
+    enablerepo: remi,remi-php71,epel
+    name: phpMyAdmin
+
+- name: Setting phpMyAdmin (Apache2.4)
+  replace:
+    dest: /etc/httpd/conf.d/phpMyAdmin.conf
+    regexp: "Require local"
+    replace: "Require all granted"
+
+- name: start httpd
+  systemd:
+    name: httpd
+    enabled: yes
+    state: started
